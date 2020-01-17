@@ -1,0 +1,105 @@
+CRC Check – Client Side
+#include<stdio.h> #include<stdlib.h> #include<string.h> #include<sys/socket.h> #include<sys/types.h> #include<netinet/in.h> #include<arpa/inet.h> #define port 3000
+
+void main()
+{
+int sersocket, s, keylen, msglen, i, j, k; struct sockaddr_in serveraddr, newaddr;
+char input[100], key[30], key1[30],temp[30],quot[100],rem[30];
+
+sersocket = socket(PF_INET, SOCK_DGRAM, 0); if (sersocket>0)
+printf("Socket Created!");
+
+serveraddr.sin_family = PF_INET; serveraddr.sin_port = htons(port); serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+printf("\nEnter the String : "); scanf("%s", input); printf("Enter Key: "); scanf("%s", key); keylen=strlen(key); msglen=strlen(input); strcpy(key1,key);
+for (i=0;i<keylen-1;i++)
+{
+input[msglen+i]='0';
+}
+for (i=0;i<keylen;i++)
+
+
+temp[i]=input[i];
+for (i=0;i<msglen;i++)
+{
+quot[i]=temp[0];
+ 
+if(quot[i]=='0') for (j=0;j<keylen;j++)
+key[j]='0';
+else
+for (j=0;j<keylen;j++) key[j]=key1[j];
+for (j=keylen-1;j>0;j--)
+{
+if(temp[j]==key[j])
+rem[j-1]='0'; else
+rem[j-1]='1';
+}
+rem[keylen-1]=input[i+keylen]; strcpy(temp,rem);
+}
+for (i=0;i<keylen-1;i++)
+{
+input[msglen+i]=rem[i];
+}
+sendto(sersocket, input, sizeof(input), 0, (struct sockaddr*) &serveraddr, sizeof(serveraddr)); sendto(sersocket, key1, sizeof(key1), 0 , (struct sockaddr*) &serveraddr, sizeof(serveraddr));
+
+}
+
+
+
+CRC Check – Server Side
+#include<stdio.h> #include<stdlib.h> #include<string.h> #include<sys/socket.h> #include<sys/types.h> #include<netinet/in.h> #include<arpa/inet.h> # define port 3000
+
+void main()
+{
+int sersocket, s, keylen, msglen, i, j, k; struct sockaddr_in serveraddr, newaddr; int newsocket, size;
+char input[100], key[30], key1[30],temp[30],quot[100],rem[30];
+ 
+sersocket = socket(PF_INET, SOCK_DGRAM, 0); if (sersocket > 0)
+printf("Socket Created"); serveraddr.sin_family = PF_INET; serveraddr.sin_port = htons(port); serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+s = bind(sersocket,(struct sockaddr*) &serveraddr, sizeof(serveraddr)); if (s == 0)
+printf("\nBind Success!");
+
+size = sizeof(newaddr);
+recvfrom(sersocket, input, sizeof(input),0, (struct sockaddr*) &newaddr, &size); s = bind(sersocket,(struct sockaddr*) &serveraddr, sizeof(serveraddr)); recvfrom(sersocket, key, sizeof(key), 0, (struct sockaddr*) &newaddr, &size); printf("\nData : %s\nKey : %s", input, key);
+
+keylen=strlen(key); msglen=strlen(input); strcpy(key1,key);
+for (i=0;i<keylen;i++) temp[i]=input[i];
+for (i=0;i<msglen-1;i++)
+{
+quot[i]=temp[0];
+if(quot[i]=='0') for (j=0;j<keylen;j++)
+key[j]='0';
+else
+for (j=0;j<keylen;j++) key[j]=key1[j];
+for (j=keylen-1;j>0;j--)
+{
+if(temp[j]==key[j])
+rem[j-1]='0'; else
+rem[j-1]='1';
+}
+rem[keylen-1]=input[i+keylen]; strcpy(temp,rem);
+ 
+
+
+k=1;
+ 
+}
+strcpy(rem, temp);
+printf("\nQuotient is: %s\nRemainder is : %s\n", quot, rem);
+ 
+for(i=0;i<keylen-1;i++)
+{
+if(rem[i]=='1')
+{
+printf("Error is present.. \n");
+ 
+k=0;
+break;
+}
+}
+if(k==1)
+printf("No error found\n");
+
+
+}

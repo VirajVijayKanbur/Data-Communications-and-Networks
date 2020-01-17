@@ -1,0 +1,113 @@
+Client:
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#define port 8080
+void main(){
+int clisocket;
+int mssg[20],p,sd,i,c=0;
+struct sockaddr_in serveraddr;
+clisocket = socket(PF_INET,SOCK_STREAM,0);
+if(clisocket > 0)
+printf("socket created\n");
+serveraddr.sin_family = PF_INET;
+serveraddr.sin_port = htons(port);
+serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+connect(clisocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+printf("enter the size of message bits \n");
+scanf("%d",&sd);
+for(i=0;i<sd;i++)
+{
+  scanf("%d",&mssg[i]);
+}
+for(i=0;i<sd;i++)
+{
+   if(mssg[i] == 1)
+	c++;
+   else  
+     continue;
+}
+if(c%2 == 0){
+   mssg[sd] = 0;
+   p=0;
+}
+else if(c%2 == 1){
+   mssg[sd] = 1;
+   p = 1; 
+}
+for(i=0;i<sd;i++)
+{
+  printf("%d \n",mssg[i]);
+}
+printf("parity bit : %d",p);
+
+send(clisocket,mssg,sizeof(mssg),0);
+printf("\n message sent with adding parity bit");
+}
+
+Server:
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#define port 8080
+void main(){
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+int sersocket,s,size,newsocket;
+int mssg[9],i,c=0,sd,p;
+sersocket = socket(PF_INET,SOCK_STREAM,0);		
+if(sersocket > 0)
+printf("socket created\n");
+serveraddr.sin_family = PF_INET;
+serveraddr.sin_port = htons(port);
+serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+s = bind(sersocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr)); 
+if(s==0)
+printf("binded\n");
+listen(sersocket,1);
+size = sizeof(newaddr);
+newsocket = accept(sersocket,(struct sockaddr *)&newaddr,&size);
+if(newsocket > 0)
+ printf("accepted\n");
+recv(newsocket,mssg,sizeof(mssg),0);
+
+printf("enter the size of data");
+scanf("%d",&sd);
+
+for(i=0;i<=sd;i++)
+{
+	printf("%d",mssg[i]);
+}
+for(i=0;i<=sd;i++)
+{
+	if(mssg[i]==1)
+	  c++;
+	else
+	continue;
+}
+if(c%2 == 0)
+  p = 0;
+else 
+  p = 1; 
+
+if( ( p==0 && mssg[sd] == 0) || ( p==0 && mssg[sd] == 1) ){
+   printf("no error");
+   
+   printf("parity bit %d",p);
+}
+else{
+  printf("error");
+   printf("parity bit %d",p);
+}
+
+}

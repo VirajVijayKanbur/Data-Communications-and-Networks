@@ -1,0 +1,110 @@
+//DICTIONARY IMPLEMENTATION - UDP
+
+//SERVER:
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int sersocket,newsocket,s,clisocket;
+struct sockaddr_in *serveraddr;
+struct sockaddr_in *newaddr;
+sersocket=socket(PF_INET,SOCK_STREAM,0);
+if(sersocket>0) { printf("socket is created"); }
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+s=bind(sersocket,(struct sockaddr *)&serveraddr,&sizeof(serveraddr));
+if(s==0) printf("bind success");
+clisocket=sizeof(newaddr);
+
+FILE *fpp;
+fpp=fopen("viraj","r");
+char ipaddr[16];
+recvfrom(sersocket,ipaddr,sizeof(ipaddr),0,(struct sockaddr *)&newaddr,&clisocket);
+
+if(fpp==NULL) {printf("couldn't open file");}
+else
+{
+printf("file opened success\n");
+int flag=0;
+while(fscanf(fpp,"%s",buffer)!=EOF)
+{
+if(!strcmp(buffer,ipaddr))
+{
+printf("FOUND");
+flag=1;
+}
+}
+if(flag==1)
+{
+if(strcmp(buffer,"@")==0)
+{
+printf("MAC ADDRESS:  ");
+while(strcmp(buffer,"#")!=0)
+{
+fscanf(fpp,"%s",buffer);
+if(strcmp(buffer,"#")!=0)
+{
+printf("%s",buffer);
+}
+}
+}
+printf("\n");
+break;
+}
+}
+
+close(sersocket);
+}
+
+// UDP CLIENT
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+clisocket=socket(PF_INET,SOCK_DGRAM,0);
+if(clisocket>0){printf("socket created\n");}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+char ip[16];
+printf("Enter IP address ");
+scanf("%s",ip);
+sendto(clisocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+close(clisocket);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
