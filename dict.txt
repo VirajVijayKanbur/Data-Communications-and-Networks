@@ -1,0 +1,127 @@
+DICTIONARY IMPLEMENTATION:
+
+SERVER:
+#include<stdio.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<string.h>
+#include<netinet/in.h>
+#define port 5000
+void main()
+{
+int sersocket,s,clisocket,newsocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+sersocket=socket(AF_INET,SOCK_DGRAM,0);
+if(sersocket>0).....
+
+serveraddr.sin_family=AF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+
+s=bind(sersocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+if(s==0).....
+
+clisocket=sizeof(newaddr);
+char word[100];
+int choice;
+recvfrom(sersocket,word,sizeof(word),0,(struct sockaddr *)&newaddr,&clisocket);
+recvfrom(sersocket,&choice,sizeof(&choice),0,(struct sockaddr *)&newaddr,&clisocket);
+
+FILE *fpp;
+fpp=fopen("viraj.txt","r");
+char buffer[100];
+int f=0;
+
+while(fscanf(fpp,"%s",buffer)!=EOF)
+{
+if(!strcmp(buffer,word))
+{
+printf("word found");
+f=1;
+}
+if(f==1 && choice==1)
+{
+if(strcmp(buffer,"@")==0)
+{
+while(strcmp(buffer,"#")!=0)
+{
+fscanf(fpp,"%s",buffer);
+if(strcmp(buffer,"#")!=0)
+{
+printf("%s",buffer);
+}
+}
+printf("\n");
+}
+}
+
+if(f==1 && choice==2)
+{
+printf("word found's antonyn:");
+if(strcmp(buffer,"&")==0)
+{
+while(strcmp(buffer,"!")!=0)
+{
+fscanf(fpp,"%s",buffer);
+if(strcmp(buffer,"!")!=0)
+{
+printf("%s",buffer);
+}
+}
+printf("\n");
+}
+}
+
+
+}//end while
+fclose(fpp);
+close(sersocket);
+}
+
+
+CLIENT:
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#define port 4000
+
+void main(){
+int sersocket,s,count,i;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+int clisocket;
+int size,c=0,choice;
+FILE *fp;
+char data[100],buffer[100],word[25];
+clisocket=socket(AF_INET,SOCK_DGRAM,0);
+if(clisocket>0)
+printf("Client socket created\n");
+serveraddr.sin_family=AF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+if(fp==NULL)
+{
+printf("file could nt open\n");
+return;
+}
+else
+{
+printf("Opened successful!\n");
+}
+
+printf("Enter the word: \n");
+scanf("%s",word);
+printf("Enter 1 for meaning and 2 for antonym\n:");
+scanf("%d",&choice);
+sendto(clisocket,word,sizeof(word),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+sendto(clisocket,&choice,sizeof(&choice),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+
+fclose(fp);
+close(clisocket);
+}

@@ -1,0 +1,107 @@
+TRANFER FILE CONTENTS:
+
+SERVER:
+#include<stdio.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<string.h>
+#include<netinet/in.h>
+#define port 5000
+void main()
+{
+int sersocket,s,clisocket,newsocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+sersocket=socket(AF_INET,SOCK_DGRAM,0);
+if(sersocket>0).....
+
+serveraddr.sin_family=AF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+
+s=bind(sersocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+if(s==0).....
+
+clisocket=sizeof(newaddr);
+listen(sersocket,1);
+newsocket=accept(sersocket,(struct sockaddr *)&newaddr,&clisocket);
+if(newsocket>0)
+
+FILE *fpp;
+fpp=fopen("viraj.txt","r");
+if(fpp==NULL)..error occured
+else
+{
+char buffer[100];
+int c;
+while(fscanf(fpp,"%s",buffer)!=EOF)
+{
+c++;
+}
+send(newsocket,&c,sizeof(c),0);
+while(fscanf(fpp,"%s",buffer)!=EOF)
+{
+send(newsocket,buffer,1024,0);
+}
+fclose(fpp);
+close(newsocket);
+close(sersocket);
+}
+}
+
+
+
+
+CLIENT:
+#include<stdio.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<string.h>
+#include<netinet/in.h>
+#define port 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+clisocket=socket(AF_INET,SOCK_STREAM,0);
+if(clisocket>0).......
+
+serveraddr.sin_family=AF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+connect(clisocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+
+char buffer[100];
+FILE *fp;
+fp=fopen("charan.txt","w");
+if(fp==NULL)...
+else
+{
+int c=0;
+recv(clisocket,&c,sizeof(c),0);
+printf("no of words are %d\n",c); 
+while(c>0)
+{
+c--;
+fprintf(fp,"%s",buffer);
+}
+rewind(fp);
+// NOW we print contents of fp
+char suff[100];
+while(fscanf(fp,"%s",suff)!=EOF)
+{
+printf("%s",suff);
+}
+}
+fclose(fp);
+close(clisocket);
+}
+
+
+

@@ -1,0 +1,101 @@
+// UDP AUTHENTICATION:
+
+// UDP CLIENT
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+clisocket=socket(PF_INET,SOCK_DGRAM,0);
+if(clisocket>0)
+{
+printf("socket created\n");
+}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+char username[100];
+char password[100];
+printf("Enter username :");
+scanf("%s",username);
+printf("\nEnter password :");
+scanf("%s",password);
+char msg[50];
+sendto(clisocket,username,sizeof(username),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+sendto(clisocket,password,sizeof(password),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+recvfrom(clisocket,msg,sizeof(msg),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+printf("%s",msg);
+close(clisocket);
+}
+
+
+
+
+//SERVER:
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int sersocket,newsocket,s,clisocket;
+struct sockaddr_in *serveraddr;
+struct sockaddr_in *newaddr;
+sersocket=socket(PF_INET,SOCK_STREAM,0);
+if(sersocket>0) 
+{ 
+printf("socket is created"); 
+}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+s=bind(sersocket,(struct sockaddr *)&serveraddr,&sizeof(serveraddr));
+if(s==0) printf("bind success");
+clisocket=sizeof(newaddr);
+
+char usr[][100]={"viraj","shivam","raj"};
+char psw[][100]={"k99","123","lop"};
+char msg[]="authorized";
+char errmsg[]="not authorized";
+char data[100];
+char key[100];
+
+recvfrom(sersocket,data,sizeof(data),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+recvfrom(sersocket,key,sizeof(key),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+int f=0;
+for(int i=0;i<3;i++)
+{
+if(strcmp(usr[i],data)==0)
+{
+f=1;
+if(strcmp(psw[i],key)==0)
+{
+f=2;
+}
+}
+}
+if(f==0 || f==1)
+{
+sendto(sersocket,errmsg,sizeof(errmsg),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+}
+else
+{
+sendto(sersocket,msg,sizeof(msg),0,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+}
+close(sersocket);
+}

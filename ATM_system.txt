@@ -1,0 +1,147 @@
+// BANK ATM SYSTEM
+// TCP SERVER
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int sersocket,newsocket,s,clisocket;
+struct sockaddr_in *serveraddr;
+struct sockaddr_in *newaddr;
+sersocket=socket(PF_INET,SOCK_STREAM,0);
+if(sersocket>0) { printf("socket is created"); }
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+s=bind(sersocket,(struct sockaddr *)&serveraddr,&sizeof(serveraddr));
+if(s==0) printf("bind success");
+clisocket=sizeof(newaddr);
+listen(sersocket,1);
+char name[]="viraj";
+char cardno[]="1234 2345 0008 9890";
+int pin=743;
+float balance=5050.2f;
+
+newsocket=accept(sersocket,(struct sockaddr *)&newaddr,&clisocket)
+if(newsocket>0)
+{
+printf("request is accepted");
+}
+char n[50];
+char cd[50];
+int p;
+printf("Ready to accept values: ");
+recv(newsocket,n,1024,0);
+recv(newsocket,cd,1024,0);
+recv(newsocket,&p,sizeof(p),0);
+
+int f=0;
+
+if(strcmp(cardno,cd)==0)
+{
+if(pin==p)
+{
+f=1;
+}
+}
+int withdraw;
+if(f==1)
+{
+printf("validated - welcome");
+send(newsocket,&f,sizeof(f),0);
+recv(newsocket,&withdraw,sizeof(withdraw),0);
+if(withdraw>=balance)
+{
+printf("success\n");
+balance-=withdraw;
+}
+else
+{
+printf("WARNING! ");
+}
+}
+else
+{
+printf("not validated");
+send(newsocket,&f,sizeof(f),0);
+}
+close(sersocket);
+}
+
+// TCP CLIENT
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+clisocket=socket(PF_INET,SOCK_STREAM,0);
+if(clisocket>0){printf("socket created\n");}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+char name[100];
+char cardno[16];
+int pin;
+float balance;
+
+connect(clisocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+printf("enter name ");
+scanf("%s",name);
+
+printf("enter cardno ");
+scanf("%s",cardno);
+
+printf("enter pin ");
+scanf("%d",&pin);
+
+
+
+send(clisocket,name,sizeof(name),0);
+send(clisocket,cardno,sizeof(cardno),0);
+send(clisocket,&pin,sizeof(pin),0);
+
+int f;
+recv(clisocket,&f,sizeof(f),0);
+if(f==1)
+{
+printf("enter wd ");
+scanf("%f",&wd);
+send(clisocket,&wd,sizeof(wd),0);
+}
+else
+{
+printf("not validated");
+}
+close(clisocket);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

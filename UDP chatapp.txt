@@ -1,0 +1,84 @@
+//CHAT APPLICATION
+
+// UDP CLIENT
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+while(1)
+{
+clisocket=socket(PF_INET,SOCK_DGRAM,0);
+if(clisocket>0)
+{
+printf("socket created\n");
+}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+char mesg[100];
+char buff[100];
+printf("Enter message :");
+scanf("%s",mesg);
+printf("\nEnter password :");
+if(msg[0]=='0')
+{
+break;
+}
+send(clisocket,mesg,sizeof(msg),0);
+recv(clisocket,buff,sizeof(buff),0);
+printf("data received is %s",buff);
+close(clisocket);
+}
+}
+
+//SERVER:
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define port 5000
+void main()
+{
+int sersocket,newsocket,s,clisocket;
+struct sockaddr_in *serveraddr;
+struct sockaddr_in *newaddr;
+sersocket=socket(PF_INET,SOCK_STREAM,0);
+if(sersocket>0) 
+{ 
+printf("socket is created"); 
+}
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=htonl(INADDR_ANY);
+s=bind(sersocket,(struct sockaddr *)&serveraddr,&sizeof(serveraddr));
+if(s==0) printf("bind success");
+clisocket=sizeof(newaddr);
+
+int n=0;
+char buffer[100];
+char suff[100];
+while(n=recv(sersocket,buffer,sizeof(buffer))>0)
+{
+printf("message from client is %s",buffer);
+printf("send");
+scanf("%s",suff);
+send(sersocket,suff,sizeof(suff),0);
+}
+
+close(sersocket);
+}

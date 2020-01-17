@@ -1,0 +1,111 @@
+// TCP FILE TRANSFER
+
+//SERVER
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define 5000
+void main()
+{
+int sersocket,s,clisocket,newsocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+sersocket=socket(AF_INET,SOCK_STREAM,0);
+if(sersocket>0)
+{
+printf("socket ready");
+}
+s=bind(sersocket,(struct sockaddr *)&serveraddr,&sizeof(serveraddr));
+if(s==0) 
+{
+printf("bind success");
+}
+clisocket=sizeof(newaddr);
+listen(sersocket,1);
+FILE *fpp;
+fpp=fopen("charan","w");
+newsocket=accept(sersocket,(struct sockaddr *)&newaddr,&clisocket)
+if(newsocket>0)
+{
+printf("request is accepted");
+}
+int c;
+recv(newsocket,&c,sizeof(c),0);
+printf("\nreceived %d",c);
+char buff[100];
+while(c>0)
+{
+recv(newsocket,buff,sizeof(buff),0);
+fprintf(fpp,"%s",buffer);
+printf("%s",buffer);
+c--;
+}
+rewind(fpp);
+while(fscanf(fpp,"%s",buffer)!=EOF)
+{
+printf("%s",buffer);
+}
+
+close(sersocket);
+}
+
+// CLIENT - TCP
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/socket.h>
+#define 5000
+void main()
+{
+int clisocket;
+struct sockaddr_in serveraddr;
+struct sockaddr_in newaddr;
+clisocket=socket(AF_INET,SOCK_STREAM,0);
+if(clisocket>0)
+{
+printf("client ready\n");
+}
+
+serveraddr.sin_family=PF_INET;
+serveraddr.sin_port=htons(port);
+serveraddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+connect(clisocket,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
+int c=0;
+FILE *fp;
+char buffer[100];
+fp=fopen("viraj","r");
+while(fscanf(fp,"%s",buffer)!=EOF)
+{
+c++;
+}
+printf("%d",c);
+send(clisocket,&c,sizeof(c),0);
+rewind(fp);
+while(fscanf(fp,"%s",buffer)!=EOF)
+{
+send(clisocket,buffer,sizeof(buffer),0);
+}
+fclose(fp)
+close(clisocket);
+}
+
+
+
+
+
+
+
+
+
+
+
+
